@@ -30,20 +30,19 @@ int main (int argc, char *argv[]) {
 	if(id != 0) MPI_Send(&sum, 1, MPI_INT, 0, 0, MPI_COMM_WORLD);
 	else count += sum;
 
-	totalTime = MPI_Wtime() - startTime;
-
-	printf("Process %d finished in time %f secs.\n", id, totalTime);
-	fflush (stdout);
-
 	if(id == 0) {
 		int q, recv_cnt;
 		for(q = 1; q < comm_sz; q++) {
 			MPI_Recv(&recv_cnt, 1, MPI_INT, q, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 			count += recv_cnt;
 		}
-
-		printf("\nA total of %d solutions were found.\n\n", count);
 	}
+	
+	totalTime = MPI_Wtime() - startTime;
+	
+	printf("Process %d finished in time %f secs.\n", id, totalTime);
+	if(id == 0) printf("\nA total of %d solutions were found.\n\n", count);
+	fflush (stdout);
 
 	MPI_Finalize();
 
