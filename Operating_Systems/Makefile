@@ -1,5 +1,6 @@
 ifneq ($(KERNELRELEASE),)
-	obj-m := HW1.o
+	obj-m := hw1.o
+	obj-m += swap_string.h
 
 else
 	KERNELDIR ?= /lib/modules/$(shell uname -r)/build
