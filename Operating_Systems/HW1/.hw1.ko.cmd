@@ -1,0 +1,1 @@
+cmd_/home/os/116_CSIE/Operating_Systems/HW1/hw1.ko := ld -r -m elf_i386 -T ./scripts/module-common.lds --build-id  -o /home/os/116_CSIE/Operating_Systems/HW1/hw1.ko /home/os/116_CSIE/Operating_Systems/HW1/hw1.o /home/os/116_CSIE/Operating_Systems/HW1/hw1.mod.o

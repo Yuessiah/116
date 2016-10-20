@@ -1,8 +1,6 @@
 ifneq ($(KERNELRELEASE),)
 	obj-m := hw1.o
-	obj-m += swap_string.h
-	obj-m += sum_tree.h
-	obj-m += calc.h
+	hw1-y := kernel_module.o some_function.o
 
 else
 	KERNELDIR ?= /lib/modules/$(shell uname -r)/build
