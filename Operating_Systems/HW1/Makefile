@@ -2,6 +2,7 @@ ifneq ($(KERNELRELEASE),)
 	obj-m := hw1.o
 	obj-m += swap_string.h
 	obj-m += sum_tree.h
+	obj-m += calc.h
 
 else
 	KERNELDIR ?= /lib/modules/$(shell uname -r)/build

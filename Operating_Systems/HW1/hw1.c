@@ -3,7 +3,6 @@
 #include<linux/init.h>
 #include<linux/kobject.h>
 #include<linux/sysfs.h>
-#include<linux/slab.h>
 #include"swap_string.h"
 #include"sum_tree.h"
 #define INPUTSIZE 100
@@ -46,12 +45,12 @@ static ssize_t user_store(struct kobject *kobj, struct kobj_attribute *attr, con
 {
 	if(!strcmp(attr->attr.name, name1))
 		strcpy(swap_string_ctnr, swap_string_solve(buf));
-	/*
-		 if(!strcmp(attr->attr.name, name2))
-		 strcpy(calc_ctnr, calc_solve(buf));
-		 if(!strcmp(attr->attr.name, name3))
-		 strcpy(sum_tree_ctnr, sum_tree_solve(buf));
-		 */
+/*
+ if(!strcmp(attr->attr.name, name2))
+	 strcpy(calc_ctnr, calc_solve(buf));
+*/
+	if(!strcmp(attr->attr.name, name3))
+		strcpy(sum_tree_ctnr, sum_tree_solve(buf));
 
 	return count;
 }

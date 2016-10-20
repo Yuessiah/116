@@ -1,6 +1,6 @@
 #define SUBSIZEMAX 10
 static int result[100], resc, cur, ok;
-static char* dig_to_str(int);
+char* dig_to_str(int);
 int str_to_dig(char*, int);
 int is_digit(char);
 static void sum_tree_init(void) { resc = cur = 0; }
@@ -39,7 +39,7 @@ static char* sum_tree_solve(const char* in)
 	return ans;
 }
 
-static char* dig_to_str(int dig)
+char* dig_to_str(int dig)
 {
 	char rsum[10];
 	static char psum[10];
