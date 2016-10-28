@@ -47,19 +47,14 @@ int main()
 void compare_exchage_for(bool phase, int start, int end)
 {
 	int endAddOne;
-	if(phase && start&1) {
+	if(!(start&1==phase) || start&1==phase && my_rank > 0) {
 		MPI_Send(L+start   , 1, MPI_INT, my_rank-1, 1, MPI_COMM_WORLD);
 		MPI_Recv(&endAddOne, 1, MPI_INT, my_rank+1, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 		if(L[end] > endAddOne) swap(L[end], endAddOne);
 		MPI_Send(&endAddOne, 1, MPI_INT, my_rank+1, 2, MPI_COMM_WORLD);
 		MPI_Recv(L+start   , 1, MPI_INT, my_rank-1, 2, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 	}
-	if(!phase && !(start&1) && my_rank > 0) {
-		MPI_Sendrecv(L+start, 1, MPI_INT, my_rank-1, 1, &endAddOne, 1, MPI_INT, my_rank+1, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-		if(L[end] > endAddOne) swap(L[end], endAddOne);
-		MPI_Sendrecv(&endAddOne, 1, MPI_INT, my_rank+1, 2, L+start, 1, MPI_INT, my_rank-1, 2, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-	}
-	for(int i = start+!(start&1); i < end; i+=2) {
+	for(int i = start+!(start&1==phase); i < end; i+=2) {
 		if(L[i] > L[i+1]) swap(L[i], L[i+1]);
 	}
 }
