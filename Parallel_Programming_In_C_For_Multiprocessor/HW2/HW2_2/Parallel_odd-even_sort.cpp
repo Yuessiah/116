@@ -26,6 +26,10 @@ int main()
 	MPI_Bcast(L , n, MPI_INT, 0, MPI_COMM_WORLD);
 
 	task_itv = (my_rank != comm_sz-1)? n/comm_sz : n-(n/comm_sz)*(comm_sz-1);
+	if(task_itv < 3) {
+		printf("rank %d: task interval must greater than or equal to 3.\n", my_rank);
+		return 1;
+	}
 	int start = my_rank*(n/comm_sz);
 	int end = start+task_itv - 1;
 
@@ -35,7 +39,6 @@ int main()
 	}
 
 	MPI_Gather(L+start, task_itv, MPI_INT, L, task_itv, MPI_INT, 0, MPI_COMM_WORLD);
-	MPI_Barrier(MPI_COMM_WORLD);
 
 	if(my_rank == 0) {
 		for(int i = 0; i < n; i++) printf("%d ", L[i]);
@@ -43,6 +46,7 @@ int main()
 	}
 
 	MPI_Finalize();
+	return 0;
 }
 
 void compare_exchage_for(bool phase, int start, int end)
@@ -54,7 +58,6 @@ void compare_exchage_for(bool phase, int start, int end)
 	}
 	if(!((end&1)!=phase) && my_rank != comm_sz-1) {
 		MPI_Recv(&endAddOne, 1, MPI_INT, my_rank+1, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-		//printf("endAddOne = %d\n", endAddOne);
 		if(L[end] > endAddOne) swap(L[end], endAddOne);
 		MPI_Send(&endAddOne, 1, MPI_INT, my_rank+1, 2, MPI_COMM_WORLD);
 	}
