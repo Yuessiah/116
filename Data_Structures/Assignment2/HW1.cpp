@@ -1,5 +1,6 @@
 #include<stdio.h>
 const int maxn = 100;
+FILE *fptr = NULL;
 
 struct matrix_1_dimension {
 	int value;
@@ -9,13 +10,20 @@ int n, D[maxn][maxn], a, b;
 
 void input()
 {
-	scanf("%d", &n);
+	char fileName[20];
+	printf("Please input the file name:");
+	scanf("%s", fileName);
+	fptr = fopen(fileName, "r");
+
+	fscanf(fptr, "%d", &n);
 	for(int i = 0; i < n; i++)
 		for(int j = 0; j < n; j++)
-			scanf("%d", &D[i][j]);
-	printf("a: ");
+			fscanf(fptr, "%d", &D[i][j]);
+	fclose(fptr);
+
+	printf("a:");
 	scanf("%d", &a);
-	printf("b: ");
+	printf("b:");
 	scanf("%d", &b);
 }
 
