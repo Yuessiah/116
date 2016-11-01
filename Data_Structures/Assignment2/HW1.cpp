@@ -6,7 +6,7 @@ struct matrix_1_dimension {
 	int value;
 	int i, j;
 }e[maxn*maxn];
-int n, D[maxn][maxn], a, b;
+int n, D[maxn][maxn], a, b, eLen;
 
 void input()
 {
@@ -26,12 +26,20 @@ void input()
 	printf("b:");
 	scanf("%d", &b);
 }
+void output()
+{
+	for(int i = 0; i < eLen; i++) {
+		char buf[12];
+		sprintf(buf, "e[%d]=%d", i, e[i].value);
+		printf("%-11sd(%d,%d)\n", buf, e[i].i, e[i].j);
+	}
+}
 
 int main()
 {
 	input();
 
-	int eLen = 0;
+	eLen = 0;
 	for(int i = 0; i < n; i++) {
 		int jEnd = (b-1)-1+i+1;
 		if(jEnd >= n) jEnd = n-1;
@@ -42,11 +50,6 @@ int main()
 		}
 	}
 
-	for(int i = 0; i < eLen; i++) {
-		char buf[12];
-		sprintf(buf, "e[%d]=%d", i, e[i].value);
-		printf("%-11sd(%d,%d)\n", buf, e[i].i, e[i].j);
-	}
-
+	output();
 	return 0;
 }
