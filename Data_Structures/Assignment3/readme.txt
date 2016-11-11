@@ -1,11 +1,11 @@
 homework 1
-—pbfs•û–@QoÅ’Z˜Hœl
-routew—ñ‘¶“I¥‹Nêy‘–“ž“IÅ’Z?É
-vis•\Ž¦—LŸ“—L‘–‰ßŸˆÊ’u
-p¥posŒ‹\é“, ‘¶’˜ác‘O“IˆÊ’u
-r•\Ž¦ác‘O‘–“ž“Irow, c•\Ž¦ác‘O‘–“¹“Icolumn
+ç”¨bfsæ–¹æ³•æ‰¾å‡ºæœ€çŸ­è·¯å¾‘
+routeé™£åˆ—å­˜çš„æ˜¯èµ·é»žèµ°åˆ°çš„æœ€çŸ­?æ•¸
+visè¡¨ç¤ºæœ‰æ²’æœ‰èµ°éŽæ­¤ä½ç½®
+pæ˜¯posçµæ§‹é«”, å­˜è‘—ç•¶å‰çš„ä½ç½®
+rè¡¨ç¤ºç•¶å‰èµ°åˆ°çš„row, cè¡¨ç¤ºç•¶å‰èµ°é“çš„column
 
 homework 2
-front“I‹NŽn?“ž’ê¥-1ŠÒ¥0? ??“¾‰äD˜ª?..
-ˆ×r›õpdf—¡“IqueueŽ¦ˆÓš¤ ‘æˆêŒÂ‹óŠÔ•s‘¶“Œ¼?...?
-„¢(L„t`)„¡
+frontçš„èµ·å§‹?åˆ°åº•æ˜¯-1é‚„æ˜¯0? ??å¾—æˆ‘å¥½äº‚?..
+ç‚ºç”šéº¼pdfè£¡çš„queueç¤ºæ„åœ– ç¬¬ä¸€å€‹ç©ºé–“ä¸å­˜æ±è¥¿?...?
+â”(Â´Ð´`)â”Œ
