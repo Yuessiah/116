@@ -3,7 +3,7 @@ homework 1
 route陣列存的是起點走到的最短步數
 vis表示有沒有走過此位置
 p是pos結構體, 存著當前的位置
-r表示當前走到的row, c表示當前走道的column
+r表示當前走到的row, c表示當前走到的column
 
 homework 2
 front的起始值到底是-1還是0? 你搞得我好亂啊..
