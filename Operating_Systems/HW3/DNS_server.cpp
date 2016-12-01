@@ -75,7 +75,7 @@ void* request(void* arg)
 			else if(method[0] == 'S' && method[1] == 'E' && method[2] == 'T') SET(domain, ipv4, sbuf);
 			else sprintf(sbuf, "405 \"Method Not Allowed\"");
 
-			printf("server: %s\n", sbuf);
+			puts(sbuf);
 			send(fd, sbuf, sizeof(sbuf), 0);
 		}
 	}
