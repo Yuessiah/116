@@ -18,25 +18,15 @@ int main()
 
 void transpose(entry* M, int n, int m)
 {
-	int a[50][50];
-	entry *RItr, *CItr;
-
-	CItr = M;
+	entry* CItr = M;
 	for(int i = 1; i <= m; i++) {
 		CItr = CItr->east;
-		RItr = CItr->south;
+		entry* RItr = CItr->south;
 		for(int j = 1; j <= n; j++) {
 			if(RItr != NULL && j == RItr->row && i == RItr->col) {
-				a[i][j] = RItr->value;
+				printf("%d ", RItr->value);
 				RItr = RItr->south;
-			} else a[i][j] = 0;
-		}
-	}
-
-	//output
-	for(int i = 1; i <= m; i++) {
-		for(int j = 1; j <= n; j++) {
-			printf("%-3d ", a[i][j]);
+			} else printf("0 ");
 		}
 		putchar('\n');
 	}
