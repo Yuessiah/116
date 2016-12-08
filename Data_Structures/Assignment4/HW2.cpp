@@ -33,7 +33,6 @@ void transpose(entry* M, int n, int m)
 		}
 	}
 
-	//output
 	for(int i = 1; i <= m; i++) {
 		for(int j = 1; j <= n; j++) {
 			printf("%-3d ", a[i][j]);

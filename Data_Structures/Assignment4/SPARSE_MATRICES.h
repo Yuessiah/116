@@ -33,6 +33,7 @@ void east_push(entry* A, entry* B)
 	while(Itr->east != NULL) Itr = Itr->east;
 	Itr->east = B;
 }
+
 void south_push(entry* A, entry* B)
 {
 	entry* Itr = A;
