@@ -26,17 +26,7 @@ void transpose(entry* M, int n, int m)
 			if(RItr != NULL && j == RItr->row && i == RItr->col) {
 				printf("%d ", RItr->value);
 				RItr = RItr->south;
-<<<<<<< HEAD
-			} else a[i][j] = 0;
-		}
-	}
-
-	for(int i = 1; i <= m; i++) {
-		for(int j = 1; j <= n; j++) {
-			printf("%-3d ", a[i][j]);
-=======
 			} else printf("0 ");
->>>>>>> b239f954c8a22ac0d862dd5ac20e60be9f9137e2
 		}
 		putchar('\n');
 	}
