@@ -76,20 +76,4 @@ void input(entry* M, int n, int m)
 	}
 }
 
-void print(entry* M, int n, int m)
-{
-	entry* RItr = M;
-	for(int i = 1; i <= n; i++) {
-		RItr = RItr->south;
-		entry* CItr = RItr->east;
-		for(int j = 1; j <= m; j++) {
-			if(CItr != NULL && i == CItr->row && j == CItr->col) {
-				printf("%d ", CItr->value);
-				CItr = CItr->east;
-			} else printf("0 ");
-		}
-		putchar('\n');
-	}
-}
-
 #endif
