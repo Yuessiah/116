@@ -15,13 +15,13 @@ int policy, maxVP, maxPF;
 int Disk[capacity], Frame[capacity];
 queue<int> q;
 int VPN, PFN, EVPN;
-int Disk_to, Disk_from;
+int Dest, Src;
 
 void initialization()
 {
 	memset(Disk, -1, sizeof(Disk));
 	memset(Frame, -1, sizeof(Frame));
-	Disk_to = Disk_from = -1;
+	EVPN = Dest = Src = -1;
 }
 
 void input_trace_detail()
@@ -66,13 +66,19 @@ int search()
 	//Miss
 	int rep = find_replacement();
 
-	for(int i = 0; i < maxVP; i++) if(Disk[i] == -1) {
-		Disk_to = i;
-		EVPN = Disk[i] = Frame[rep];
-	}
-	for(int i = 0; i < maxVP; i++) if(Disk[i] == VPN) {
-		Disk_from = i;
-		Disk[i] = -1;
+	if(Frame[rep] != -1) {
+		int i;
+		for(i = 0; i < maxVP; i++) if(Disk[i] == -1) {
+			Dest = i;
+			EVPN = Disk[i] = Frame[rep];
+			break;
+		}
+		for(i = 0; i < maxVP; i++) if(Disk[i] == VPN) {
+			Src = i;
+			Disk[i] = -1;
+			break;
+		}
+		if(i == maxVP) Src = -1;
 	}
 	Frame[rep] = VPN;
 	PFN = rep;
@@ -85,16 +91,22 @@ int main()
 	initialization();
 	input_trace_detail();
 
+	double failure = 0, success = 0;
 	char ref[100];
 	while(~scanf("%s%d", ref, &VPN)) {
 		int status = search();
-		if(status == HIT)
+		if(status == HIT) {
 			printf("Hit, %d=>%d\n", VPN, PFN);
-		if(status == MISS)
-			printf("Miss, %d, %d>>%d, %d<<%d\n", PFN, EVPN, Disk_to, VPN, Disk_from);
+			success++;
+		}
+		if(status == MISS) {
+			printf("Miss, %d, %d>>%d, %d<<%d\n", PFN, EVPN, Dest, VPN, Src);
+			failure++;
+		}
 
 		//record_for_LRU();
 	}
+	printf("Page Fault Rate: %.3f", failure/(success+failure));
 
 	return 0;
 }
