@@ -3,7 +3,6 @@
 #include<cstring>
 #include<ctime>
 #include<queue>
-#include<set>
 #define FIFO 0
 #define LRU 1
 #define RANDOM 2
