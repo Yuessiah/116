@@ -1,19 +1,25 @@
 #include<cstdio>
+#include<cstdlib>
 #include<cstring>
-#include<iostream>
-#include<set>
+#include<ctime>
 #include<queue>
+#include<set>
 #define FIFO 0
 #define LRU 1
 #define RANDOM 2
 #define HIT 3
 #define MISS 4
 const int capacity = 100;
+const int INF = 0x7fffffff;
 using namespace std;
 
 int policy, maxVP, maxPF;
 int Disk[capacity], Frame[capacity];
-queue<int> q;
+
+int PF_used_time[capacity], timestamp;
+queue<int> Q;
+set<int> S;
+
 int VPN, PFN, EVPN;
 int Dest, Src;
 
@@ -22,6 +28,8 @@ void initialization()
 	memset(Disk, -1, sizeof(Disk));
 	memset(Frame, -1, sizeof(Frame));
 	EVPN = Dest = Src = -1;
+	timestamp = 0;
+	srand(time(NULL));
 }
 
 void input_trace_detail()
@@ -47,13 +55,42 @@ void input_trace_detail()
 int find_replacement()
 {
 	for(int i = 0; i < maxPF; i++) if(Frame[i] == -1) return i;
-	int rep = q.front(); q.pop();
-	return rep;
+
+	//Miss case
+	int rep; //replacement
+
+	//First In First Out
+	if(policy == FIFO) {
+		rep = Q.front(); Q.pop();
+		return rep;
+	}
+
+	//Least Recently Used
+	if(policy == LRU) {
+		int min = INF;
+		for(int i = 0; i < maxPF; i++) if(min > PF_used_time[i]) {
+			min = PF_used_time[i];
+			rep = i;
+		}
+		PF_used_time[rep] = INF;
+		return rep;
+	}
+
+	//Random
+	if(policy == RANDOM) {
+		rep = rand() % maxPF;
+		return rep;
+	}
 }
 void record_for_FIFO()
 {
 	if(policy != FIFO) return;
-	q.push(PFN);
+	Q.push(PFN);
+}
+void record_for_LRU()
+{
+	if(policy != LRU) return;
+	PF_used_time[PFN] = timestamp++;
 }
 
 int search()
@@ -104,7 +141,7 @@ int main()
 			failure++;
 		}
 
-		//record_for_LRU();
+		record_for_LRU();
 	}
 	printf("Page Fault Rate: %.3f", failure/(success+failure));
 
