@@ -7,8 +7,9 @@
 #define FIFO 0
 #define LRU 1
 #define RANDOM 2
-#define HIT 3
-#define MISS 4
+#define SECOND_CHANCE 3
+#define HIT 1
+#define MISS 0
 const int capacity = 100;
 const int INF = 0x7fffffff;
 using namespace std;
@@ -16,7 +17,7 @@ using namespace std;
 int policy, maxVP, maxPF;
 int Disk[capacity], Frame[capacity];
 
-int PF_used_time[capacity], timestamp;
+int PF_used_time[capacity], timestamp, chance_PFN[capacity];
 queue<int> Q;
 set<int> S;
 
@@ -40,7 +41,8 @@ void input_trace_detail()
 	scanf("%s%s", s, s);
 	if(!strcmp(s, "FIFO")) policy = FIFO;
 	if(!strcmp(s, "LRU")) policy = LRU;
-	if(!strcmp(s, "RANDOM")) policy = RANDOM;
+	if(!strcmp(s, "Random")) policy = RANDOM;
+	if(!strcmp(s, "Second-chance")) policy = SECOND_CHANCE;
 
 	//Number of Virtual Page
 	scanf("%s%s%s%s%d", s, s, s, s, &maxVP);
@@ -56,7 +58,7 @@ int find_replacement()
 {
 	for(int i = 0; i < maxPF; i++) if(Frame[i] == -1) return i;
 
-	//Miss case
+	//Physical Frame is full, Policy start!
 	int rep; //replacement
 
 	//First In First Out
@@ -81,6 +83,17 @@ int find_replacement()
 		rep = rand() % maxPF;
 		return rep;
 	}
+
+	//Second-chance
+	if(policy == SECOND_CHANCE) {
+		rep = Q.front(); Q.pop();
+		while(chance_PFN[rep]) {
+			chance_PFN[rep]--;
+			Q.push(rep);
+			rep = Q.front(); Q.pop();
+		}
+		return rep;
+	}
 }
 void record_for_FIFO()
 {
@@ -91,6 +104,12 @@ void record_for_LRU()
 {
 	if(policy != LRU) return;
 	PF_used_time[PFN] = timestamp++;
+}
+void record_for_SECOND_CHANCE()
+{
+	if(policy != SECOND_CHANCE) return;
+	chance_PFN[PFN] = 1;
+	Q.push(PFN);
 }
 
 int search()
@@ -120,6 +139,7 @@ int search()
 	Frame[rep] = VPN;
 	PFN = rep;
 	record_for_FIFO();
+	record_for_SECOND_CHANCE();
 	return MISS;
 }
 
