@@ -18,7 +18,6 @@ int Disk[capacity], Frame[capacity];
 
 int PF_used_time[capacity], timestamp, chance_PFN[capacity];
 queue<int> Q;
-set<int> S;
 
 int VPN, PFN, EVPN;
 int Dest, Src;
@@ -137,8 +136,7 @@ int search()
 	}
 	Frame[rep] = VPN;
 	PFN = rep;
-	record_for_FIFO();
-	record_for_SECOND_CHANCE();
+	record_for_FIFO(); record_for_SECOND_CHANCE();
 	return MISS;
 }
 
