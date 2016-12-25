@@ -1,0 +1,29 @@
+a.
+
+private:
+count, i, j
+shared:
+a, n, temp
+----
+
+b.
+
+No.
+----
+
+c.
+
+No.
+Yes.
+----
+
+d.
+See the attachment: Count_sort.cpp
+----
+
+e.
+
+Performance: (n^2) / (The number of threads) .
+But the limit of the number of threads is upper bound of n.
+
+The qsort's performance is O(nlgn).
