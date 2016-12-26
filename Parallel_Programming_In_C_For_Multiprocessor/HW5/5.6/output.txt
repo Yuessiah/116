@@ -1,0 +1,3 @@
+reindeer 44
+population 8
+winter 4
