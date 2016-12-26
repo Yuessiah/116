@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 			}
 		}
 
-		fin.close();
+		ffin.close();
 	}
 
 
