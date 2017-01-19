@@ -1,6 +1,3 @@
-/**********************************/
-/*Warning Some error are existing.*/
-/**********************************/
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -17,22 +14,27 @@ int in_redir, out_redir;
 
 void exec_cmd_line(char***);
 char*** cmd_parser(char*);
+void cd(char*);
 
 
 int main()
 {
-	char input[MAX_PIPE*MAX_ARGC*MAX_ARGV];
+	char line[MAX_PIPE*MAX_ARGC*MAX_ARGV];
 
 	while(1) {
 		in_redir  = STDIN_FILENO;
 		out_redir = STDOUT_FILENO;
+		memset(line, 0, sizeof(line));
 
 		printf("0$ ");
-		fgets(input, sizeof(input), stdin);
-		input[strlen(input)-1] = '\0';
 
-		if(!strcmp(input, "exit")) break;
-		exec_cmd_line(cmd_parser(input));
+		fgets(line, sizeof(line), stdin);
+		line[strlen(line)-1] = '\0';
+
+		if(!strcmp(line, "exit")) break;
+		if(line[0] == 'c' && line[1] == 'd') { cd(line+3); continue; }
+
+		exec_cmd_line(cmd_parser(line));
 	}
 
 	return EXIT_SUCCESS;
@@ -141,4 +143,15 @@ void io_redirection(char* seq, char redir)
 
 	if(redir == '>') out_redir = open(fname, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 	if(redir == '<') in_redir  = open(fname, O_RDONLY);
+}
+
+void cd(char* want)
+{
+	if(want[0] != '/') {
+		char pwd[100];
+		getcwd(pwd, sizeof(pwd));
+		strcat(pwd, "/");
+		strcat(pwd, want);
+		chdir(pwd);
+	} else chdir(want);
 }
