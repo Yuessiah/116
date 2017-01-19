@@ -1,11 +1,11 @@
-/******************************************/
-/* Warning: The homework is not finished. */
-/******************************************/
-
+/**********************************/
+/*Warning Some error are existing.*/
+/**********************************/
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
 #include<unistd.h>
+#include<fcntl.h>
 #include<sys/wait.h>
 
 #define MAX_ARGC 20
@@ -20,8 +20,13 @@ char*** cmd_parser(char*);
 int main()
 {
 	char input[MAX_PIPE*MAX_ARGC*MAX_ARGV];
+	int in  = dup(STDIN_FILENO);
+	int out = dup(STDOUT_FILENO);
 
 	while(1) {
+		if(STDIN_FILENO  != in)  dup2(in,  STDIN_FILENO);
+		if(STDOUT_FILENO != out) dup2(out, STDOUT_FILENO);
+
 		printf("0$ ");
 		fgets(input, sizeof(input), stdin);
 		input[strlen(input)-1] = '\0';
@@ -37,6 +42,7 @@ int main()
 void creat_proc(int in_fd, int out_fd, char** argv, int pipecnt, int pipe_fd[][2])
 {
 	pid_t p = fork();
+
 	if(p < 0) {
 		fprintf(stderr, "Error: Unable to create child.\n");
 		exit(EXIT_FAILURE);
@@ -80,8 +86,13 @@ void exec_cmd_line(char*** argvs)
 	}
 }
 
+void io_redirection(char*, char);
+
 char*** cmd_parser(char* seq)
 {
+	io_redirection(seq, '>');
+	io_redirection(seq, '<');
+
 	static char* cmd[MAX_PIPE+1];
 
 	cmd[0] = strtok(seq, "|");
@@ -104,4 +115,34 @@ char*** cmd_parser(char* seq)
 	}
 
 	return argvs;
+}
+
+void io_redirection(char* seq, char redir)
+{
+	int i = 0;
+	while(1) {
+		if(seq[i] == redir) break;
+		if(seq[i] == '\0') return;
+		i++;
+	}
+	seq[i] = ' ';
+
+	int j = 0;
+	char fname[20];
+	for(i = i+2; seq[i] != ' ' && seq[i] != '\0'; i++) {
+		fname[j++] = seq[i];
+		seq[i] = ' ';
+	}
+	fname[j] = '\0';
+
+	int fd;
+	if(redir == '>') {
+		fd = open(fname, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+		dup2(fd, STDOUT_FILENO);
+	}
+	if(redir == '<') {
+		fd = open(fname, O_RDONLY);
+		dup2(fd, STDIN_FILENO);
+	}
+	close(fd);
 }
