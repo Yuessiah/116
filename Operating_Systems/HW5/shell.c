@@ -13,6 +13,8 @@
 #define MAX_PIPE 15
 
 
+int in_redir, out_redir;
+
 void exec_cmd_line(char***);
 char*** cmd_parser(char*);
 
@@ -20,12 +22,10 @@ char*** cmd_parser(char*);
 int main()
 {
 	char input[MAX_PIPE*MAX_ARGC*MAX_ARGV];
-	int in  = dup(STDIN_FILENO);
-	int out = dup(STDOUT_FILENO);
 
 	while(1) {
-		if(STDIN_FILENO  != in)  dup2(in,  STDIN_FILENO);
-		if(STDOUT_FILENO != out) dup2(out, STDOUT_FILENO);
+		in_redir  = STDIN_FILENO;
+		out_redir = STDOUT_FILENO;
 
 		printf("0$ ");
 		fgets(input, sizeof(input), stdin);
@@ -70,9 +70,11 @@ void exec_cmd_line(char*** argvs)
 	for(int i = 0; i < pipecnt; i++) pipe(pipe_fd[i]);
 
 	for(int C = 0; C < cmdcnt; C++) {
-		int in_fd = C? pipe_fd[C-1][0] : STDIN_FILENO;
-		int out_fd = (C < cmdcnt-1)? pipe_fd[C][1] : STDOUT_FILENO;
+		int in_fd = C? pipe_fd[C-1][0] : in_redir;
+		int out_fd = (C < cmdcnt-1)? pipe_fd[C][1] : out_redir;
 		creat_proc(in_fd, out_fd, argvs[C], pipecnt, pipe_fd);
+		if(in_fd  == in_redir  && in_fd  != STDIN_FILENO)  close(in_redir);
+		if(out_fd == out_redir && out_fd != STDOUT_FILENO) close(out_redir);
 	}
 
 	for(int i = 0; i < pipecnt; i++) {
@@ -103,6 +105,8 @@ char*** cmd_parser(char* seq)
 
 	static char*  argvs_arr[MAX_PIPE+1][MAX_ARGC];
 	static char** argvs[MAX_PIPE+1];
+	memset(argvs, 0, sizeof(argvs));
+	memset(argvs_arr, 0, sizeof(argvs_arr));
 
 	for(int i = 0; cmd[i]; i++) {
 		argvs[i] = argvs_arr[i];
@@ -135,14 +139,6 @@ void io_redirection(char* seq, char redir)
 	}
 	fname[j] = '\0';
 
-	int fd;
-	if(redir == '>') {
-		fd = open(fname, O_WRONLY | O_CREAT | O_TRUNC, 0666);
-		dup2(fd, STDOUT_FILENO);
-	}
-	if(redir == '<') {
-		fd = open(fname, O_RDONLY);
-		dup2(fd, STDIN_FILENO);
-	}
-	close(fd);
+	if(redir == '>') out_redir = open(fname, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+	if(redir == '<') in_redir  = open(fname, O_RDONLY);
 }
