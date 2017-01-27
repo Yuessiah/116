@@ -10,7 +10,7 @@
 static char *name1 = "swap_string";
 static char *name2 = "calc";
 static char *name3 = "sum_tree";
-static unsigned int mask = 111;
+static char *mask = "111";
 static char swap_string_ctnr[INPUTSIZE];
 static char calc_ctnr[INPUTSIZE];
 static char sum_tree_ctnr[INPUTSIZE];
@@ -18,7 +18,7 @@ struct kobject *hw1;
 static ssize_t user_store(struct kobject *kobj, struct kobj_attribute *attr, const char* buf, size_t count);
 static ssize_t user_show(struct kobject *kobj, struct kobj_attribute *attr,  char* buf);
 
-module_param(mask, uint, S_IRUGO);
+module_param(mask, charp, S_IRUGO);
 module_param(name1, charp, S_IRUGO);
 module_param(name2, charp, S_IRUGO);
 module_param(name3, charp, S_IRUGO);
@@ -34,9 +34,9 @@ static int __init create(void)
 	hw1_sum_tree.attr.name    = name3;
 	hw1 = kobject_create_and_add("hw1", kernel_kobj);
 
-	if(mask/100)    sysfs_create_file(hw1, &hw1_swap_string.attr);
-	if(mask%100/10) sysfs_create_file(hw1, &hw1_calc.attr);
-	if(mask%10)     sysfs_create_file(hw1, &hw1_sum_tree.attr);
+	if(mask[0] == '1') sysfs_create_file(hw1, &hw1_swap_string.attr);
+	if(mask[1] == '1') sysfs_create_file(hw1, &hw1_calc.attr);
+	if(mask[2] == '1') sysfs_create_file(hw1, &hw1_sum_tree.attr);
 
 	return 0;
 }

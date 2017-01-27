@@ -10,6 +10,6 @@ all:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
 
 clean:
-	rm -rf *.o *.ko *.o.cmd *.mod.c modules.order Module.symvers .tmp_versions
+	rm -rf *.o *.ko .[!.]*.cmd *.mod.c modules.order Module.symvers .tmp_versions
 
 endif
