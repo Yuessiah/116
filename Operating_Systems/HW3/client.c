@@ -21,14 +21,14 @@ int main(int argc, char* argv[])
 
 	connect(sockfd, (struct sockaddr*)&dest, sizeof(dest));
 
-	char buf[maxc];
+	char sbuf[maxc*3], rbuf[maxc*2];
 	pid_t pid = fork();
 	if(!pid) while(1) {
-		fgets(buf, maxc, stdin);
-		buf[strlen(buf)-1] = '\0';
-		send(sockfd, buf, sizeof(buf), 0);
+		fgets(sbuf, maxc*3, stdin);
+		sbuf[strlen(sbuf)-1] = '\0';
+		send(sockfd, sbuf, sizeof(sbuf), 0);
 	} else while(1) {
-		if(recv(sockfd, buf, sizeof(buf), 0) > 0) printf("%s\n", buf);
+		if(recv(sockfd, rbuf, sizeof(rbuf), 0) > 0) printf("%s\n", rbuf);
 	}
 
 	close(sockfd);
