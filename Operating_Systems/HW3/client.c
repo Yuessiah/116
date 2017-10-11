@@ -24,12 +24,11 @@ int main(int argc, char* argv[])
 	char buf[maxc];
 	pid_t pid = fork();
 	if(!pid) while(1) {
-		fgets(buf, 64, stdin);
+		fgets(buf, maxc, stdin);
 		buf[strlen(buf)-1] = '\0';
 		send(sockfd, buf, sizeof(buf), 0);
 	} else while(1) {
-		if(recv(sockfd, buf, sizeof(buf), 0) <= 0) continue;
-		printf("%s\n", buf);
+		if(recv(sockfd, buf, sizeof(buf), 0) > 0) printf("%s\n", buf);
 	}
 
 	close(sockfd);

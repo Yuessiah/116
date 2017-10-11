@@ -50,7 +50,7 @@ int main(void)
 	while(1) {
 		int newfd = accept(listener, (struct sockaddr*)&remoteaddr, &addrlen);
 		pid = (pthread_t*)malloc(sizeof(pthread_t));
-		pthread_create(pid, NULL, request, (void*)newfd);
+		pthread_create(pid, NULL, request, (void*)&newfd);
 	}
 
 	freeaddrinfo(ai);
@@ -61,7 +61,7 @@ int main(void)
 void* request(void* arg)
 {
 	char rbuf[maxc*3], sbuf[maxc*2], method[maxc], domain[maxc], ipv4[maxc];
-	int nbytes, fd = (int)arg;
+	int nbytes, fd = *((int*)arg);
 
 	while(1) {
 		if(recv(fd, rbuf, sizeof(rbuf), 0) <= 0) {
@@ -70,9 +70,9 @@ void* request(void* arg)
 			sscanf(rbuf, "%s%s%s", method, domain, ipv4);
 			for(int i = 0; domain[i] != '\0'; i++) domain[i] = tolower(domain[i]);
 
-			if(method[0] == 'I' && method[1] == 'N' && method[2] == 'F' && method[3] == 'O') INFO(sbuf);
-			else if(method[0] == 'G' && method[1] == 'E' && method[2] == 'T') GET(domain, sbuf);
-			else if(method[0] == 'S' && method[1] == 'E' && method[2] == 'T') SET(domain, ipv4, sbuf);
+			if(!strcmp(method, "INFO")) INFO(sbuf);
+			else if(!strcmp(method, "GET")) GET(domain, sbuf);
+			else if(!strcmp(method, "SET")) SET(domain, ipv4, sbuf);
 			else sprintf(sbuf, "405 \"Method Not Allowed\"");
 
 			puts(sbuf);
