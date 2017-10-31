@@ -33,7 +33,7 @@ int mailbox_close(mailbox_t box) { return munmap(box, SIZE); }
 int mailbox_send(mailbox_t box, mail_t *mail)
 {
 	if(mailbox_check_full(box)) return -1;
-	*((char*)box) = 1; //set box be full
+	*((char*)box) = 1; //the box is full now.
 	mail_move_in(box, mail);
 	return 0;
 }
@@ -41,7 +41,7 @@ int mailbox_send(mailbox_t box, mail_t *mail)
 int mailbox_recv(mailbox_t box, mail_t *mail)
 {
 	if(mailbox_check_empty(box)) return -1;
-	*((char*)box) = 0; //set box be empty
+	*((char*)box) = 0; //the box is empty now.
 	mail_move_out(box, mail);
 	return 0;
 }
