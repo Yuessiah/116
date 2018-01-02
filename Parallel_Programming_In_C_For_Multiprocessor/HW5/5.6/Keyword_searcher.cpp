@@ -41,8 +41,7 @@ int main(int argc, char* argv[])
 
 	while((direntptr = readdir(dptr)) != NULL) {
 		if(direntptr->d_name[0] == '.') continue;
-		char prefix[100]; strcpy(prefix, "input/");
-		string filename(strcat(prefix, direntptr->d_name));
+		string filename(strcat(strdup("input/"), direntptr->d_name));
 		input.push_back(filename);
 	}
 
@@ -52,8 +51,8 @@ int main(int argc, char* argv[])
 
 		string s;
 		while(ffin >> s) {
-			for(int j = 0; j < s.length(); j++)
-				if(isalpha(s[j])) s[j] = tolower(s[j]); else s[j] = ' ';
+			for(int j = 0, l = s.length(); j < l; j++)
+				s[j] = isalpha(s[j])? tolower(s[j]) : ' ';
 
 			stringstream ss(s);
 			while(ss >> word) {
