@@ -1,6 +1,6 @@
 (declaim #+sbcl(sb-ext:muffle-conditions warning))
 
-(defconstant maxn 100)
+(defconstant maxn 10000)
 
 (setf a (make-array maxn))
 (setf b (make-array maxn))
