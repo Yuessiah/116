@@ -1,0 +1,12 @@
+當遇到/*切換至 CCOMMENT 狀態
+
+[^*\n]* | \*+[^/\n]*
+若是遇到含有/的字串則忽略
+或是第一個遇到*的字串也忽略
+
+直到碰到\n 將 comment 行數加一
+而*緊接著/就切回 INITIAL
+
+在上述中都能順便將 C style comment 訊息輸出
+
+Undeclared variables 和 Redefined variables 只要每次有用到 id 的時候就呼叫 lookup_symbol() 去檢查這個 id 有沒有被用過就行
