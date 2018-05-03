@@ -12,17 +12,15 @@ edge_input(N) :-
 
 yes_or_no(A, B) :- reachable(A, B) -> write('Yes'), nl; write('No'), nl.
 
-query(M, N) :-
+query(M) :-
 	M > 0,
 	read(A), read(B),
 	asserta(visited(B)),
 	yes_or_no(A, B),
 	retractall(visited(_)),
-	T is M-1, query(T, N);
+	T is M-1, query(T);
 	true.
 
-main :-
+:-
 	read(N), read(E), edge_input(E),
-	read(M), query(M, N), halt.
-
-:- main.
+	read(M), query(M), halt.
