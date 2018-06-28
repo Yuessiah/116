@@ -32,8 +32,8 @@ id      {letter}+({letter}|{digit})*
  /* Relational */
 ">"  { yylval.rule_type.op = GT_t; return '>'; }
 "<"  { yylval.rule_type.op = LT_t; return '<'; }
-">=" { yylval.rule_type.op = GE_t; return MTE; }
-"<=" { yylval.rule_type.op = LE_t; return LTE; }
+">=" { yylval.rule_type.op = GE_t; return GE; }
+"<=" { yylval.rule_type.op = LE_t; return LE; }
 "==" { yylval.rule_type.op = EQ_t; return EQ; }
 "!=" { yylval.rule_type.op = NE_t; return NE; }
 

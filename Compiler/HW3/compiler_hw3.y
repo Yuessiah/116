@@ -17,7 +17,7 @@ struct SYMBOL {
   int i_num;
 } *sym[MAXI];
 
-int num_line = 0, SIZE = 0, f_flag = 0;
+int num_line = 0, SIZE = 0, f_flag = 0, eq_flag = 0, ne_flag = 0, label = 0, exit_lb = 0;
 
 FILE *file;
 
@@ -39,7 +39,7 @@ void dump_symbol();
 
 /* Token definition */
 %token INC DEC
-%token MTE LTE EQ NE
+%token GE LE EQ NE
 %token <rule_type> ADDASGN SUBASGN MULASGN DIVASGN MODASGN
 %token AND OR NOT
 %token IF ELSE FOR
@@ -58,9 +58,8 @@ void dump_symbol();
 %type <rule_type> primary_expr constant
 %type <rule_type> type
 
-%type <rule_type> print_func_op add_op mul_op relational_op assignment_op 
+%type <rule_type> print_func_op add_op mul_op relational_op assignment_op equality_op
 %type <rule_type> '+' '-'
-%type <intVal> equality_op
 %start program
 
 %right ')' ELSE
@@ -88,7 +87,7 @@ declaration
 
       fprintf(file, "fstore %d\n", lookup_symbol($2.id));
 
-      f_flag = 0;
+      f_flag = eq_flag = ne_flag = 0;
     }
     | VAR ID type NEWLINE {
       if($3.type == FLOAT_t) f_insert_symbol($2.id, "float32");
@@ -97,7 +96,7 @@ declaration
       fprintf(file, "ldc 0.0\n");
       fprintf(file, "fstore %d\n", lookup_symbol($2.id));
 
-      f_flag = 0;
+      f_flag = eq_flag = ne_flag = 0;
     }
 ;
 
@@ -113,7 +112,7 @@ initializer
 
 compound_stat
     : '{' '}'
-    | '{' block_item_list '}'
+    | '{' NEWLINE block_item_list '}'
 ;
 
 block_item_list
@@ -126,12 +125,29 @@ block_item
 ;
 
 selection_stat
-    : IF '(' expr ')' stat ELSE stat
-    | IF '(' expr ')' stat
+    : IF '(' expr ')' if_stat ELSE {
+      fprintf(file, "goto EXIT_%d\n", exit_lb);
+      fprintf(file, "Label_%d:\n", label++);
+    } stat {
+      fprintf(file, "EXIT_%d:\n", exit_lb++);
+    }
+    | IF '(' expr ')' if_stat {
+      fprintf(file, "Label_%d:\n", label++);
+    }
+;
+
+if_stat
+    : {
+      fprintf(file, "f2i\n");
+      if(eq_flag) fprintf(file, "ifne Label_%d\n", label);
+      else if(ne_flag) fprintf(file, "ifeq Label_%d\n", label);
+      else fprintf(file, "ifge Label_%d\n", label);
+      eq_flag = ne_flag = 0;
+    } stat
 ;
 
 expression_stat
-    : expr NEWLINE { f_flag = 0; }
+    : expr NEWLINE { f_flag = eq_flag = ne_flag = 0; }
     | NEWLINE
 ;
 
@@ -144,7 +160,7 @@ expr
       if($2.asgn == MULASGN_t) fprintf(file, "fmul\n");
       if($2.asgn == DIVASGN_t) fprintf(file, "fdiv\n");
       if($2.asgn == MODASGN_t) {
-        if(f_flag) yyerror("<ERROR> Modulation can't used with float number");
+        if(f_flag) yyerror("<ERROR> Modulation can't use with float number");
         else {
           fprintf(file, "f2i\n");
           fprintf(file, "irem\n");
@@ -165,7 +181,11 @@ assignment_op
 
 equality_expr
     : relational_expr
-    | equality_expr equality_op relational_expr
+    | equality_expr equality_op relational_expr {
+      fprintf(file, "fsub\n");
+      if($2.op == NE_t) ne_flag = 1;
+      if($2.op == EQ_t) eq_flag = 1;
+    }
 ;
 
 equality_op
@@ -175,14 +195,21 @@ equality_op
 
 relational_expr
     : additive_expr
-    | relational_expr relational_op additive_expr
+    | relational_expr relational_op additive_expr {
+      if($2.op == GT_t || $2.op == GE_t) fprintf(file, "swap\n");
+      fprintf(file, "fsub\n");
+      if($2.op == GE_t || $2.op == LE_t) {
+        fprintf(file, "ldc 1.0\n");
+        fprintf(file, "fsub\n");
+      }
+    }
 ;
 
 relational_op
     : '<'
     | '>'
-    | LTE
-    | MTE
+    | LE
+    | GE
 ;
 
 additive_expr
@@ -205,7 +232,7 @@ multiplicative_expr
       if($2.op == MUL_t) fprintf(file, "fmul\n");
       if($2.op == DIV_t) fprintf(file, "fdiv\n");
       if($2.op == MOD_t)  {
-        if(f_flag) yyerror("<ERROR> Modulation can't used with float number");
+        if(f_flag) yyerror("<ERROR> Modulation can't use with float number");
         else {
           fprintf(file, "f2i\n");
           fprintf(file, "irem\n");
@@ -277,7 +304,7 @@ print_func
       if(f_flag) fprintf(file, "F)V\n");
       else fprintf(file, "I)V\n");
 
-      f_flag = 0;
+      f_flag = eq_flag = ne_flag = 0;
     }
     | print_func_op '(' QUOTA STRING QUOTA ')' NEWLINE {
       fprintf(file, "ldc \"%s\"\n", $4.string);
@@ -342,7 +369,7 @@ void yyerror(char const *s) {
 
 int main(int argc, char** argv)
 {
-  file = fopen("test.j", "w");
+  file = fopen("Computer.j", "w");
 
   fprintf(file, ".class public main\n.super java/lang/Object\n.method public static main([Ljava/lang/String;)V\n.limit stack 10\n.limit locals 10\n");
 
